@@ -7,8 +7,8 @@ import cors from "cors";
 
 import { errorHandler } from "./middlewares/errorHandler";
 
-import investmentsRoutes from "./routes/investments";
-import authorizationRoutes from "./routes/authorization";
+import investmentsRouter from "./routes/investmentsRouter";
+import authorizationRouter from "./routes/authorizationRouter";
 
 class App {
   public server;
@@ -37,8 +37,8 @@ class App {
   routes() {
     // routes
 
-    this.server.use("/api/authorization", authorizationRoutes);
-    this.server.use("/api/investments", investmentsRoutes);
+    this.server.use("/api/authorization", authorizationRouter);
+    this.server.use("/api/investments", investmentsRouter);
 
     this.server.get("/api", (req, res) => {
       res.status(200).json({
