@@ -5,6 +5,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 
+import { errorHandler } from "./middlewares/errorHandler";
+
 import investmentsRoutes from "./routes/investments";
 import authorizationRoutes from "./routes/authorization";
 
@@ -45,10 +47,15 @@ class App {
       });
     });
 
-    // 404
-    this.server.get("*", (req, res) => {
-      res.status(404).json({ message: "404 Not Found" });
+    // bad routes
+    this.server.get("*", (req, res, next) => {
+      const error = new Error("Not found.");
+      res.status(404);
+      next(error);
     });
+
+    // error handler
+    this.server.use(errorHandler);
   }
 }
 
