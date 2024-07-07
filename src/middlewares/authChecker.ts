@@ -1,3 +1,4 @@
+import { jwtPayload } from "./../utils/generateToken";
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 
@@ -12,7 +13,13 @@ const authChecker: RequestHandler = (req, res, next) => {
 
     const token = authorization.split(" ")[1];
     const secretKey = process.env.JWT_SECRET_PHRASE?.toString() || "";
-    const payload = jwt.verify(token, secretKey);
+    const payload: jwtPayload = jwt.verify(token, secretKey) as jwtPayload;
+
+    if (!payload || !payload.rights) {
+      res.status(401);
+      return next(new Error("Token malformed."));
+    }
+    res.locals.rights = payload.rights;
     next();
   } catch (error) {
     res.status(401);

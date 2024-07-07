@@ -4,7 +4,7 @@ export enum Rights {
   Read = "R",
   ReadWrite = "RW",
 }
-interface jwtPayload {
+export interface jwtPayload extends jwt.JwtPayload {
   id?: string;
   username?: string;
   rights: Rights.Read | Rights.ReadWrite;
