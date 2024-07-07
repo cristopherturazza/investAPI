@@ -10,7 +10,7 @@ interface jwtPayload {
   rights: Rights.Read | Rights.ReadWrite;
 }
 
-const generateToken = (payload: jwtPayload) => {
+export const generateToken = (payload: jwtPayload) => {
   const secretKey: string = process.env.JWT_SECRET_PHRASE?.toString() || "";
   const options = { expiresIn: process.env.JWT_EXPIRES?.toString() || "24h" };
 
@@ -19,5 +19,3 @@ const generateToken = (payload: jwtPayload) => {
   }
   return jwt.sign(payload, secretKey, options);
 };
-
-export default generateToken;
