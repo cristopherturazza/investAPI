@@ -1,20 +1,23 @@
 import { Router } from "express";
 import authChecker from "../middlewares/authChecker";
 import rightsChecker from "../middlewares/rightsChecker";
+import {
+  getInvestments,
+  createInvestment,
+  getInvestmentById,
+} from "../controllers/investmentsController";
 
 const router = Router();
 
-router.use(authChecker);
+// read only routes
+//router.use(authChecker);
 
-router.get("/", (req, res) => {
-  return res.json({ message: "simple token" });
-});
+router.get("/", getInvestments);
+router.get("/:id", getInvestmentById);
 
 // routes with write rights
-router.use(rightsChecker);
+//router.use(rightsChecker);
 
-router.post("/", (req, res) => {
-  return res.json({ message: "read and write token" });
-});
+router.post("/", createInvestment);
 
 export default router;
