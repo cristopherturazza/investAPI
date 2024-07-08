@@ -21,6 +21,12 @@ model User {
   password  String
 }
 
+model InvalidToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
+
 model Investment {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())

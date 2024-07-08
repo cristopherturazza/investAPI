@@ -21,7 +21,7 @@ const authController: RequestHandler = async (req, res, next) => {
         res.status(401);
         return next(new Error("Invalid authorization header."));
       }
-      const user = await User.checkCredentials(
+      const user = await User.checkUserCredentials(
         credentials.username,
         credentials.password
       );
