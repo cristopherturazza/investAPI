@@ -5,6 +5,7 @@ import {
   getInvestments,
   createInvestment,
   getInvestmentById,
+  confirmInvestment,
 } from "../controllers/investmentsController";
 
 const router = Router();
@@ -19,5 +20,7 @@ router.get("/:id", getInvestmentById);
 //router.use(rightsChecker);
 
 router.post("/", createInvestment);
+
+router.patch("/:id", confirmInvestment);
 
 export default router;

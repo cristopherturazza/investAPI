@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { isDate, isDecimal, isUUID } from "validator";
 import Investment from "../models/Investment";
 
 const getInvestments: RequestHandler = async (req, res, next) => {
@@ -13,8 +14,12 @@ const getInvestments: RequestHandler = async (req, res, next) => {
 
 const getInvestmentById: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = req.params; // TODO - Validation
-    console.log(id);
+    const { id } = req.params;
+
+    if (!isUUID(id)) {
+      res.status(400);
+      return next(new Error("Invalid investment id"));
+    }
 
     const investment = await Investment.getInvestment(id);
     return res.status(200).json(investment);
@@ -31,6 +36,11 @@ const createInvestment: RequestHandler = async (req, res, next) => {
     if (!value || !annualRate) {
       res.status(400);
       return next(new Error("Missing required fields"));
+    }
+
+    if (!isDecimal(String(value)) || !isDecimal(String(annualRate))) {
+      res.status(400);
+      return next(new Error("Value and annual rate must be decimal numbers"));
     }
 
     if (value <= 0 || annualRate <= 0) {
@@ -51,7 +61,6 @@ const createInvestment: RequestHandler = async (req, res, next) => {
 
     // create new investment
     const createdInvestment = await Investment.createInvestment(newInvestment);
-
     return res.status(201).json(createdInvestment);
   } catch (error) {
     res.status(500);
@@ -59,4 +68,35 @@ const createInvestment: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { getInvestments, createInvestment, getInvestmentById };
+const confirmInvestment: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { confirmDate } = req.body;
+    if (!isUUID(id)) {
+      res.status(400);
+      return next(new Error("Invalid investment id"));
+    }
+
+    if (!confirmDate || !isDate(confirmDate)) {
+      res.status(400);
+      return next(new Error("Invalid or missing confirm date"));
+    }
+
+    // confirm investment
+    const confirmedInvestment = await Investment.confirmInvestment(
+      id,
+      confirmDate
+    );
+    return res.status(200).json(confirmedInvestment);
+  } catch (error) {
+    res.status(500);
+    next(error);
+  }
+};
+
+export {
+  getInvestments,
+  createInvestment,
+  getInvestmentById,
+  confirmInvestment,
+};

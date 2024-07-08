@@ -33,6 +33,7 @@ class Investment {
       });
       return createdInvestment;
     } catch (error) {
+      console.error(error);
       throw new Error("Unexpected error while creating investment");
     }
   }
@@ -46,6 +47,7 @@ class Investment {
       }
       return investments;
     } catch (error) {
+      console.error(error);
       throw new Error("Unexpected error while getting investments");
     }
   }
@@ -64,7 +66,25 @@ class Investment {
       }
       return investment;
     } catch (error) {
+      console.error(error);
       throw new Error("Unexpected error while getting investment");
+    }
+  }
+
+  public static async confirmInvestment(id: string, date: Date) {
+    try {
+      const confirmedInvestment = await prisma.investment.update({
+        where: {
+          id: id,
+        },
+        data: {
+          confirmDate: new Date(date),
+        },
+      });
+      return confirmedInvestment;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unexpected error while confirming investment");
     }
   }
 }
