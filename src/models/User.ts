@@ -12,6 +12,7 @@ class User {
       });
       return user;
     } catch (error) {
+      console.error(error);
       throw new Error("Unexpected error while checking user credentials");
     }
   }
