@@ -22,6 +22,8 @@ class Investment {
     this.value = value;
     this.annualRate = annualRate;
   }
+
+  // create new investment
   public static async createInvestment(investment: Investment) {
     try {
       const createdInvestment = await prisma.investment.create({
@@ -35,6 +37,7 @@ class Investment {
     }
   }
 
+  // get all investments
   public static async getInvestments() {
     try {
       const investments = await prisma.investment.findMany();
@@ -47,6 +50,7 @@ class Investment {
     }
   }
 
+  // get investment by id
   public static async getInvestment(id: string) {
     try {
       const investment = await prisma.investment.findUnique({
