@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: ["query", "error"] }); // ! remove before end of development
 
 class Investment {
   id?: string;
@@ -87,6 +87,48 @@ class Investment {
       throw new Error("Unexpected error while confirming investment");
     }
   }
+
+  public static async getInvestmentsStatistics(
+    startDate: Date,
+    endDate: Date,
+    groupBy: string,
+    includeUnconfirmed: boolean
+  ) {
+    try {
+      const groupBySql = Investment.groupByClause(groupBy);
+
+      const statistics = await prisma.$queryRaw`
+      SELECT 
+        ${groupBySql} as period,
+        COUNT(*)::int as count, 
+        SUM(value::numeric) as totalValue
+      FROM public."Investment"
+      WHERE "createdAt" >= ${startDate}
+      AND "createdAt" <= ${endDate}
+      ${Prisma.raw(includeUnconfirmed ? "" : `AND "confirmDate" IS NOT NULL`)}
+      GROUP BY period
+      ORDER BY period
+    `;
+      return statistics;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unexpected error while getting investments statistics");
+    }
+  }
+  private static groupByClause = (groupBy: string) => {
+    switch (groupBy) {
+      case "day":
+        return Prisma.sql`DATE_TRUNC('day', "createdAt")`;
+      case "week":
+        return Prisma.sql`DATE_TRUNC('week', "createdAt")`;
+      case "month":
+        return Prisma.sql`DATE_TRUNC('month', "createdAt")`;
+      case "year":
+        return Prisma.sql`DATE_TRUNC('year', "createdAt")`;
+      default:
+        throw new Error("Invalid groupBy value");
+    }
+  };
 }
 
 export default Investment;

@@ -6,6 +6,7 @@ import {
   createInvestment,
   getInvestmentById,
   confirmInvestment,
+  getInvestmentsStatistics,
 } from "../controllers/investmentsController";
 
 const router = Router();
@@ -14,6 +15,7 @@ const router = Router();
 //router.use(authChecker);
 
 router.get("/", getInvestments);
+router.get("/stats", getInvestmentsStatistics);
 router.get("/:id", getInvestmentById);
 
 // routes with write rights
@@ -21,6 +23,6 @@ router.get("/:id", getInvestmentById);
 
 router.post("/", createInvestment);
 
-router.patch("/:id", confirmInvestment);
+router.patch("/", confirmInvestment);
 
 export default router;
