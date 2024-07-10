@@ -1,0 +1,1606 @@
+{
+	"info": {
+		"_postman_id": "077f9fa3-200b-4771-ba0c-5dca5a494f69",
+		"name": "investAPI",
+		"description": "TakeHome API Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36785647"
+	},
+	"item": [
+		{
+			"name": "ERR - Bad Route",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/abcdefg",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"abcdefg"
+					]
+				},
+				"description": "Health Check / Info"
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "Health Check / Info"
+			},
+			"response": []
+		},
+		{
+			"name": "ERR - Missing Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "ERR - Bad Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "sdfagasdfgdsfg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Investments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"investment_id\", res[0].id)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate body response schema with array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    ",
+							"    jsonData.forEach(function(item) {",
+							"        pm.expect(item).to.be.an('object');",
+							"        pm.expect(item).to.have.property('id');",
+							"        pm.expect(item).to.have.property('createdAt');",
+							"        pm.expect(item).to.have.property('confirmDate');",
+							"        pm.expect(item).to.have.property('value');",
+							"        pm.expect(item).to.have.property('annualRate');",
+							"        ",
+							"        pm.expect(item.id).to.be.a('string');",
+							"        pm.expect(item.createdAt).to.be.a('string');",
+							"        pm.expect(item.value).to.be.a('string');",
+							"        pm.expect(item.annualRate).to.be.a('string');      ",
+							"        pm.expect(item.confirmDate === null || typeof item.confirmDate === 'string').to.be.true;",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Token expires at second request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Investment by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate body response schema\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData).to.have.property('createdAt');",
+							"    pm.expect(jsonData).to.have.property('confirmDate');",
+							"    pm.expect(jsonData).to.have.property('value');",
+							"    pm.expect(jsonData).to.have.property('annualRate'); ",
+							"     ",
+							"    pm.expect(jsonData.id).to.be.a('string');",
+							"    pm.expect(jsonData.createdAt).to.be.a('string');",
+							"    pm.expect(jsonData.value).to.be.a('string');",
+							"    pm.expect(jsonData.annualRate).to.be.a('string');",
+							"    pm.expect(jsonData.confirmDate === null || typeof jsonData.confirmDate === 'string').to.be.true;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments/{{investment_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments",
+						"{{investment_id}}"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Investment Statistics by Day",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains an array of objects\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    ",
+							"    jsonData.forEach(function(item) {",
+							"        pm.expect(item).to.be.an('object');",
+							"        pm.expect(item).to.have.property('period');",
+							"        pm.expect(item).to.have.property('count');",
+							"        pm.expect(item).to.have.property('totalvalue');",
+							"        ",
+							"        pm.expect(item.period).to.be.a('string');",
+							"        pm.expect(item.count).to.be.a('number');",
+							"        pm.expect(item.totalvalue).to.be.a('string');",
+							"        pm.expect(new Date(item.period).toString()).to.not.equal('Invalid Date');      ",
+							"        pm.expect(item.count).to.be.above(0);",
+							"        pm.expect(Number.isInteger(item.count)).to.be.true; ",
+							"        pm.expect(Number(item.totalvalue)).to.be.a('number');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments/stats?startDate=2024-07-10&endDate=2024-09-10&groupBy=day&includeUnconfirmed=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-07-10"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-09-10"
+						},
+						{
+							"key": "groupBy",
+							"value": "day"
+						},
+						{
+							"key": "includeUnconfirmed",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Investment Statistics by Week",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains an array of objects\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    ",
+							"    jsonData.forEach(function(item) {",
+							"        pm.expect(item).to.be.an('object');",
+							"        pm.expect(item).to.have.property('period');",
+							"        pm.expect(item).to.have.property('count');",
+							"        pm.expect(item).to.have.property('totalvalue');",
+							"        ",
+							"        pm.expect(item.period).to.be.a('string');",
+							"        pm.expect(item.count).to.be.a('number');",
+							"        pm.expect(item.totalvalue).to.be.a('string');",
+							"        pm.expect(new Date(item.period).toString()).to.not.equal('Invalid Date');      ",
+							"        pm.expect(item.count).to.be.above(0);",
+							"        pm.expect(Number.isInteger(item.count)).to.be.true; ",
+							"        pm.expect(Number(item.totalvalue)).to.be.a('number');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments/stats?startDate=2024-07-10&endDate=2024-09-10&groupBy=week&includeUnconfirmed=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-07-10"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-09-10"
+						},
+						{
+							"key": "groupBy",
+							"value": "week"
+						},
+						{
+							"key": "includeUnconfirmed",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token 5",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Investment Statistics by Month",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains an array of objects\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    ",
+							"    jsonData.forEach(function(item) {",
+							"        pm.expect(item).to.be.an('object');",
+							"        pm.expect(item).to.have.property('period');",
+							"        pm.expect(item).to.have.property('count');",
+							"        pm.expect(item).to.have.property('totalvalue');",
+							"        ",
+							"        pm.expect(item.period).to.be.a('string');",
+							"        pm.expect(item.count).to.be.a('number');",
+							"        pm.expect(item.totalvalue).to.be.a('string');",
+							"        pm.expect(new Date(item.period).toString()).to.not.equal('Invalid Date');      ",
+							"        pm.expect(item.count).to.be.above(0);",
+							"        pm.expect(Number.isInteger(item.count)).to.be.true; ",
+							"        pm.expect(Number(item.totalvalue)).to.be.a('number');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments/stats?startDate=2024-07-10&endDate=2024-09-10&groupBy=month&includeUnconfirmed=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-07-10"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-09-10"
+						},
+						{
+							"key": "groupBy",
+							"value": "month"
+						},
+						{
+							"key": "includeUnconfirmed",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token 6",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Investment Statistics by Year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains an array of objects\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    ",
+							"    jsonData.forEach(function(item) {",
+							"        pm.expect(item).to.be.an('object');",
+							"        pm.expect(item).to.have.property('period');",
+							"        pm.expect(item).to.have.property('count');",
+							"        pm.expect(item).to.have.property('totalvalue');",
+							"        ",
+							"        pm.expect(item.period).to.be.a('string');",
+							"        pm.expect(item.count).to.be.a('number');",
+							"        pm.expect(item.totalvalue).to.be.a('string');",
+							"        pm.expect(new Date(item.period).toString()).to.not.equal('Invalid Date');      ",
+							"        pm.expect(item.count).to.be.above(0);",
+							"        pm.expect(Number.isInteger(item.count)).to.be.true; ",
+							"        pm.expect(Number(item.totalvalue)).to.be.a('number');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/investments/stats?startDate=2024-07-10&endDate=2024-09-10&groupBy=year&includeUnconfirmed=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-07-10"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-09-10"
+						},
+						{
+							"key": "groupBy",
+							"value": "year"
+						},
+						{
+							"key": "includeUnconfirmed",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Auth Token 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "ERR - Create Investments With Read Only Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"value\": 5000,\n    \"annualRate\": 12\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "ERR - Bad Credentials",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "badpassword",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "baduser",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "ERR - Bad Auth Type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "ashjgljkdafhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read And Write Auth Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token_write\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{test_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{test_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Investments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"PATCH response validation\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('object');",
+							"    pm.expect(jsonData).to.have.property('id').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('createdAt').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('confirmDate');",
+							"    pm.expect(jsonData).to.have.property('value').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('annualRate').that.is.a('string');",
+							"",
+							"    var createdAtDate = new Date(jsonData.createdAt);",
+							"    pm.expect(createdAtDate.toString()).to.not.equal('Invalid Date');",
+							"    pm.expect(Number(jsonData.value)).to.be.a('number');",
+							"    pm.expect(Number(jsonData.annualRate)).to.be.a('number');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token_write}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n    {\n        \"value\": 1000,\n        \"annualRate\": 7\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read And Write Auth Token 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token_write\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{test_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{test_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Investments With Confirm Date",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"POST response validation\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('object');",
+							"    pm.expect(jsonData).to.have.property('id').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('createdAt').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('confirmDate');",
+							"    pm.expect(jsonData).to.have.property('value').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('annualRate').that.is.a('string');",
+							"",
+							"    var createdAtDate = new Date(jsonData.createdAt);",
+							"    pm.expect(createdAtDate.toString()).to.not.equal('Invalid Date');",
+							"    pm.expect(Number(jsonData.value)).to.be.a('number');",
+							"    pm.expect(Number(jsonData.annualRate)).to.be.a('number');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token_write}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"value\": 1000,\n        \"annualRate\": 7,\n        \"confirmDate\": \"2024-07-10\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read And Write Auth Token 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json()",
+							"",
+							"pm.environment.set(\"jwt_token_write\", res.token)",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate the schema of the response body\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('token');",
+							"    pm.expect(responseData.token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Token is a valid JWT\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var token = jsonData.token;",
+							"",
+							"    // Funzione per verificare la validità del JWT",
+							"    function isValidJWT(token) {",
+							"        var parts = token.split('.');",
+							"        return parts.length === 3;",
+							"    }",
+							"",
+							"    pm.expect(isValidJWT(token)).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{test_password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{test_username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/authorization",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"authorization"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Investment Confirm Date",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"POST response validation\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(jsonData).to.be.an('object');",
+							"    pm.expect(jsonData).to.have.property('id').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('createdAt').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('confirmDate');",
+							"    pm.expect(jsonData).to.have.property('value').that.is.a('string');",
+							"    pm.expect(jsonData).to.have.property('annualRate').that.is.a('string');",
+							"",
+							"    var createdAtDate = new Date(jsonData.createdAt);",
+							"    pm.expect(createdAtDate.toString()).to.not.equal('Invalid Date');",
+							"    pm.expect(Number(jsonData.value)).to.be.a('number');",
+							"    pm.expect(Number(jsonData.annualRate)).to.be.a('number');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt_token_write}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"{{investment_id}}\",\n    \"confirmDate\": \"2024-07-09\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/investments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"investments"
+					]
+				},
+				"description": "Get all investments"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api"
+		}
+	]
+}
