@@ -3,6 +3,7 @@ export interface Credentials {
   password: string;
 }
 
+// decode basic auth header
 export function decodeBasicAuth(authHeader: string): Credentials | null {
   if (!authHeader.startsWith("Basic ")) {
     return null;

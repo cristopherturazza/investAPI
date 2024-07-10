@@ -4,6 +4,7 @@ import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import hpp from "hpp";
 
 import { errorHandler } from "./middlewares/errorHandler";
 
@@ -24,14 +25,14 @@ class App {
     // logger
     this.server.use(morgan("dev"));
 
-    // parse requests
-    this.server.use(express.urlencoded({ extended: true }));
+    // parse requests and security middlewares
     this.server.use(express.json());
+    this.server.use(express.urlencoded({ extended: true }));
+    this.server.use(hpp());
 
-    // security
-    this.server.use(cors());
     this.server.use(helmet());
     this.server.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+    this.server.use(cors());
   }
 
   routes() {

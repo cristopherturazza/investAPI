@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { isDate, isDecimal, isUUID } from "validator";
 import Investment from "../models/Investment";
 
-// GET REQUESTS
+// ** GET REQUESTS
 // GET ALL INVESTMENTS
 const getInvestments: RequestHandler = async (req, res, next) => {
   try {
@@ -23,8 +23,12 @@ const getInvestmentById: RequestHandler = async (req, res, next) => {
       res.status(400);
       return next(new Error("Invalid investment id"));
     }
-
     const investment = await Investment.getInvestment(id);
+
+    if (!investment) {
+      res.status(404);
+      return next(new Error("Investment not found"));
+    }
     return res.status(200).json(investment);
   } catch (error) {
     res.status(500);
@@ -90,8 +94,6 @@ const getInvestmentsStatistics: RequestHandler = async (req, res, next) => {
       includeUnconfirmedInvestments
     );
 
-    console.log(statistics);
-
     return res.status(200).json(statistics);
   } catch (error) {
     res.status(500);
@@ -99,7 +101,7 @@ const getInvestmentsStatistics: RequestHandler = async (req, res, next) => {
   }
 };
 
-// POST REQUEST - CREATE INVESTMENT
+// ** POST REQUEST - CREATE INVESTMENT
 const createInvestment: RequestHandler = async (req, res, next) => {
   try {
     const { confirmDate, value, annualRate } = req.body;
@@ -124,11 +126,14 @@ const createInvestment: RequestHandler = async (req, res, next) => {
       return next(new Error("Confirm date can't be in the past"));
     }
 
-    const newInvestment = {
-      confirmDate,
+    const newInvestment: Investment = {
       value,
       annualRate,
     };
+
+    if (confirmDate) {
+      newInvestment.confirmDate = new Date(confirmDate);
+    }
 
     // create new investment
     const createdInvestment = await Investment.createInvestment(newInvestment);
@@ -139,7 +144,7 @@ const createInvestment: RequestHandler = async (req, res, next) => {
   }
 };
 
-// PATCH REQUEST - CONFIRM INVESTMENT
+// ** PATCH REQUEST - CONFIRM INVESTMENT
 const confirmInvestment: RequestHandler = async (req, res, next) => {
   try {
     const { id, confirmDate } = req.body;

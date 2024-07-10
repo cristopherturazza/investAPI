@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+// * read only on users table for basic authentication
 class User {
   public static async checkUserCredentials(username: string, password: string) {
     try {

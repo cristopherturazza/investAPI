@@ -10,6 +10,7 @@ export interface jwtPayload extends jwt.JwtPayload {
   rights: Rights.Read | Rights.ReadWrite;
 }
 
+// jwt token generator
 export const generateToken = (payload: jwtPayload) => {
   const secretKey: string = process.env.JWT_SECRET_PHRASE?.toString() || "";
   const options = { expiresIn: process.env.JWT_EXPIRES?.toString() || "1h" };
@@ -17,5 +18,6 @@ export const generateToken = (payload: jwtPayload) => {
   if (!secretKey) {
     throw new Error("JWT_SECRET_PHRASE is not defined");
   }
+
   return jwt.sign(payload, secretKey, options);
 };

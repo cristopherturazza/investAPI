@@ -12,14 +12,14 @@ import {
 const router = Router();
 
 // read only routes
-//router.use(authChecker);
+router.use(authChecker);
 
 router.get("/", getInvestments);
 router.get("/stats", getInvestmentsStatistics);
 router.get("/:id", getInvestmentById);
 
 // routes with write rights
-//router.use(rightsChecker);
+router.use(rightsChecker);
 
 router.post("/", createInvestment);
 

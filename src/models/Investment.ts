@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 
-const prisma = new PrismaClient({ log: ["query", "error"] }); // ! remove before end of development
+const prisma = new PrismaClient();
 
 class Investment {
   id?: string;
@@ -60,10 +60,6 @@ class Investment {
           id: id,
         },
       });
-
-      if (!investment) {
-        throw new Error("Investment not found");
-      }
       return investment;
     } catch (error) {
       console.error(error);

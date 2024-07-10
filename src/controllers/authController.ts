@@ -8,14 +8,14 @@ const authController: RequestHandler = async (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {
-      // send token with read only rights
+      // * send token with read only rights
       const payload = {
         rights: Rights.Read,
       };
       const token = generateToken(payload);
       return res.status(200).json({ token: token });
     } else {
-      // send token with read and write rights
+      // * send token with read and write rights
       const credentials: Credentials | null = decodeBasicAuth(authorization);
       if (!credentials) {
         res.status(401);
@@ -39,6 +39,7 @@ const authController: RequestHandler = async (req, res, next) => {
       return res.status(200).json({ token: token });
     }
   } catch (error) {
+    console.error(error);
     next(error);
   }
 };
