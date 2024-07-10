@@ -7,6 +7,10 @@ import Investment from "../models/Investment";
 const getInvestments: RequestHandler = async (req, res, next) => {
   try {
     const investments: Investment[] = await Investment.getInvestments();
+    if (!investments || investments.length === 0) {
+      res.status(404);
+      return next(new Error("Investments not found"));
+    }
     return res.status(200).json(investments);
   } catch (error) {
     res.status(500);

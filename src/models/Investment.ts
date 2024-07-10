@@ -42,9 +42,6 @@ class Investment {
   public static async getInvestments() {
     try {
       const investments = await prisma.investment.findMany();
-      if (investments.length === 0) {
-        throw new Error("No investments found");
-      }
       return investments;
     } catch (error) {
       console.error(error);

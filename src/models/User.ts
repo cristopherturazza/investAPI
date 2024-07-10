@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -9,10 +10,14 @@ class User {
       const user = await prisma.user.findFirst({
         where: {
           username: username,
-          password: password,
         },
       });
-      return user;
+      if (!user) {
+        return null;
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      return isPasswordValid ? user : null;
     } catch (error) {
       console.error(error);
       throw new Error("Unexpected error while checking user credentials");
